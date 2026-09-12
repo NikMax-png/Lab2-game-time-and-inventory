@@ -5,6 +5,19 @@ int current_day = 1;
 int current_hour = 8;
 int inventory[10] = {0};
 
+const char* item_names[] = {
+    "Пусто",
+    "Дерево",
+    "Камень",
+    "Семена",
+    "Ягода",
+    "Палка",
+    "Гриб",
+    "Яблоко",
+    "Яйцо",
+    "Ткань"
+};
+
 int main() {
     int choice;
     while (1) {
@@ -65,5 +78,33 @@ void work_hours() {
         current_hour -= 24;
         current_day++;
     }
+}
+
+void view_inventory() {
+    for (int i = 0; i < 10; i++) {
+        printf("Слот %d: [%d]", i, inventory[i]);
+        if (inventory[i] >= 1 && inventory[i] <= 9) {
+            printf(" (%s)", item_names[inventory[i]]);
+        }
+        printf("\n");
+    }
+}
+
+void place_item() {
+    int index, item_id;
+    printf("Введите индекс слота (0-%d): ", 10 - 1);
+    scanf("%d", &index);
+    if (index < 0 || index >= 10) {
+        printf("Некорректный индекс.\n");
+        return;
+    }
+    printf("Введите ID предмета (0-9): ");
+    scanf("%d", &item_id);
+    if (item_id < 0 || item_id > 9) {
+        printf("Некорректный ID предмета.\n");
+        return;
+    }
+    inventory[index] = item_id;
+    printf("Предмет %s добавлен в слот %d.\n", item_names[item_id], index);
 }
 
