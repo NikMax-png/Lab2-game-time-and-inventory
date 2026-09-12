@@ -47,3 +47,23 @@ int main() {
     }
     return 0;
 }
+
+void see_time() {
+    printf("Текущее время: День %d, %02d:00\n", current_day, current_hour);
+}
+
+void work_hours() {
+    int hours;
+    printf("Введите количество часов для работы: ");
+    scanf("%d", &hours);
+    if (hours < 0) {
+        printf("Некорректное значение часов.\n");
+        return;
+    }
+    current_hour += hours;
+    while (current_hour >= 24) {
+        current_hour -= 24;
+        current_day++;
+    }
+}
+
