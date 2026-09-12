@@ -90,7 +90,7 @@ void view_inventory() {
     }
 }
 
-void place_item() {
+void put_item() {
     int index, item_id;
     printf("Введите индекс слота (0-%d): ", 10 - 1);
     scanf("%d", &index);
@@ -108,3 +108,26 @@ void place_item() {
     printf("Предмет %s добавлен в слот %d.\n", item_names[item_id], index);
 }
 
+void remove_item() {
+    int index;
+    printf("Введите индекс слота (0-%d): ", 10 - 1);
+    scanf("%d", &index);
+    if (index < 0 || index >= 10) {
+        printf("Некорректный индекс.\n");
+        return;
+    }
+    inventory[index] = 0;
+}
+
+void clear_trash() {
+    int item_id, count = 0;
+    printf("Введите ID предмета для удаления: ");
+    scanf("%d", &item_id);
+    for (int i = 0; i < 10; i++) {
+        if (inventory[i] == item_id) {
+            inventory[i] = 0;
+            count++;
+        }
+    }
+    printf("Удалено %d предметов.\n", count);
+}
