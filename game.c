@@ -18,6 +18,13 @@ const char* item_names[] = {
     "Ткань"
 };
 
+void see_time();
+void work_hours();
+void view_inventory();
+void put_item();
+void remove_item();
+void clear_trash();
+
 int main() {
     int choice;
     while (1) {
