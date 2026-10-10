@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #define INVENTORY_SIZE 10
 
 int current_day = 1;
@@ -18,6 +19,8 @@ const char* item_names[] = {
     "Ткань"
 };
 
+void show_menu();
+void run_program();
 void see_time();
 void work_hours();
 void view_inventory();
@@ -25,47 +28,73 @@ void put_item();
 void remove_item();
 void clear_trash();
 
-int main() {
-    int choice;
-    while (1) {
-        printf("\nМеню:\n");
-        printf("[0] Выход\n");
-        printf("[1] Посмотреть на часы\n");
-        printf("[2] Промотать время (Поработать)\n");
-        printf("[3] Посмотреть инвентарь\n");
-        printf("[4] Положить предмет в слот\n");
-        printf("[5] Выбросить предмет\n");
-        printf("[6] Очистка от мусора\n");
-        printf("Выберите пункт: ");
-        scanf("%d", &choice);
+int main()
+ { run_program();
+  return 0; }
 
-        switch (choice) {
-            case 0:
-                printf("Выход из программы.\n");
-                return 0;
-            case 1:
-                see_time();
-                break;
-            case 2:
-                work_hours();
-                break;
-            case 3:
-                view_inventory();
-                break;
-            case 4:
-                put_item();
-                break;
-            case 5:
-                remove_item();
-                break;
-            case 6:
-                clear_trash();
-                break;
-            default:
-                printf("Некорректный выбор.\n");
-        }
+void show_menu()
+{
+    printf("\nМеню:\n");
+    printf("[0] Выход\n");
+    printf("[1] Посмотреть на часы\n");
+    printf("[2] Промотать время (Поработать)\n");
+    printf("[3] Посмотреть инвентарь\n");
+    printf("[4] Положить предмет в слот\n");
+    printf("[5] Выбросить предмет\n");
+    printf("[6] Очистка от мусора\n");
+    printf("Выберите пункт: ");
+}
+
+int read_choice() {
+    int choice;
+    if (scanf("%d", &choice) != 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF);
+        printf("Ошибка. Пожалуйста, введите число.\n");
+        return -1;
     }
-    return 0;
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);
+    return choice;
+}
+
+int handle_choice(int choice)
+{
+    switch (choice) {
+        case 0:
+            printf("Выход из программы.\n");
+            return 0;
+        case 1:
+            see_time();
+            break;
+        case 2:
+            work_hours();
+            break;
+        case 3:
+            view_inventory();
+            break;
+        case 4:
+            put_item();
+            break;
+        case 5:
+            remove_item();
+            break;
+        case 6:
+            clear_trash();
+            break;
+        default:
+            printf("Некорректный выбор.\n");
+    }
+    return 1;
+}
+
+void run_program()
+{
+    int running = 1;
+    while (running) {
+        show_menu();
+        running = handle_choice(read_choice());
+    }
 }
 
 void see_time() {
