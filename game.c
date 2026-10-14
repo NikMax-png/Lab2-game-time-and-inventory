@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #define INVENTORY_SIZE 10
+#define MAX_ITEMS 10
+#define MAX_NAME_LEN 64
+#define INVENTORY_SLOTS 10
+#define FARMER_NAME_LEN 33
 
 int current_day = 1;
 int current_hour = 8;
@@ -27,6 +31,9 @@ void view_inventory();
 void put_item();
 void remove_item();
 void clear_trash();
+void search_item_by_name();
+void write_diary();
+void count_resources();
 
 int main()
  { run_program();
@@ -42,6 +49,9 @@ void show_menu()
     printf("[4] Положить предмет в слот\n");
     printf("[5] Выбросить предмет\n");
     printf("[6] Очистка от мусора\n");
+    printf("[7] Поиск предмета по названию\n")
+    printf("[8] Записать состояние в дневник\n")
+    printf("[9] Подсчёт ресурсов из файла\n")
     printf("Выберите пункт: ");
 }
 
