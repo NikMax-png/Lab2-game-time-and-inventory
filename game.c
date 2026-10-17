@@ -10,6 +10,8 @@ int current_day = 1;
 int current_hour = 8;
 int inventory[10] = {0};
 
+char player_name[FARMER_NAME_LEN] = "Игрок";
+
 const char* item_names[] = {
     "Пусто",
     "Дерево",
@@ -34,6 +36,7 @@ void clear_trash();
 void search_item_by_name();
 void write_diary();
 void count_resources();
+void player_name();
 
 int main()
  { run_program();
@@ -66,6 +69,24 @@ int read_choice() {
     int ch;
     while ((ch = getchar()) != '\n' && ch != EOF);
     return choice;
+}
+
+void get_player_name() {
+    printf("Введите имя персонажа (до 32 символов): ");
+    
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);
+
+    if (fgets(player_name, FARMER_NAME_LEN, stdin) != NULL) {
+        size_t len = strlen(player_name);
+        if (len > 0 && player_name[len - 1] == '\n') {
+            player_name[len - 1] = '\0';
+        }
+    }
+
+    if (strlen(player_name) == 0) {
+        strcpy(player_name, "Безымянный");
+    }
 }
 
 int handle_choice(int choice)
