@@ -58,8 +58,6 @@ void run_program() {
         printf("[5] Выбросить предмет\n");
         printf("[6] Очистка от мусора\n");
         printf("[7] Поиск предмета по названию\n")
-        printf("[8] Записать состояние в дневник\n")
-        printf("[9] Подсчёт ресурсов из файла\n")
         printf("Выберите пункт: ");
 
         if (scanf("%d", &choice) != 1) {
@@ -72,7 +70,7 @@ void run_program() {
         switch (choice) {
             case 0:
                 printf("Выход из программы.\n");
-                return;
+                return 0;
             case 1:
                 see_time();
                 break;
@@ -90,6 +88,9 @@ void run_program() {
                 break;
             case 6:
                 clear_trash();
+                break;
+            case 7:
+                search_inventory();
                 break;
             default:
                 printf("Некорректный выбор.\n");
@@ -207,4 +208,39 @@ void clear_trash() {
     }
     printf("Удалено %d предметов.\n", count);
 }
+
+void search_inventory() {
+    char name[MAX_NAME_LEN];
+    int item_id = -1;
+
+    printf("Введите название предмета: ");
+    read_line(name, sizeof(name));
+
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        if (strcmp(name, item_names[i]) == 0) {
+            item_id = i;
+            break;
+        }
+    }
+
+    if (item_id < 0) {
+        printf("Предмета с таким названием нет в каталоге.\n");
+        return;
+    }
+
+    int found = 0;
+    printf("Предмет \"%s\" найден в слотах: ", item_names[item_id]);
+    for (int i = 0; i < 10; i++) {
+        if (inventory[i] == item_id) {
+            printf("%d ", i);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("в рюкзаке его нет.");
+    }
+    printf("\n");
+}
+
 
