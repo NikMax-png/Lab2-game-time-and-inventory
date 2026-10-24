@@ -97,6 +97,9 @@ void run_program() {
             case 8:
                 write_diary();
                 break;
+            case 9:
+                count_resources();
+                break;
             default:
                 printf("Некорректный выбор.\n");
         }
