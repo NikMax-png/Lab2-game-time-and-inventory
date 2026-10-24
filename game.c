@@ -57,7 +57,8 @@ void run_program() {
         printf("[4] Положить предмет в слот\n");
         printf("[5] Выбросить предмет\n");
         printf("[6] Очистка от мусора\n");
-        printf("[7] Поиск предмета по названию\n")
+        printf("[7] Поиск предмета по названию\n");
+        printf("[8] Записать состояние в дневник фермера\n");
         printf("Выберите пункт: ");
 
         if (scanf("%d", &choice) != 1) {
@@ -243,4 +244,44 @@ void search_inventory() {
     printf("\n");
 }
 
+void write_diary() {
+    FILE *file = fopen("diary.txt", "a");
+    if (file == NULL) {
+        printf("Не удалось открыть diary.txt для записи.\n");
+        return;
+    }
 
+    time_t now = time(NULL);
+    struct tm *local = localtime(&now);
+    char timestamp[64] = "время неизвестно";
+
+    if (local != NULL) {
+        strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", local);
+    }
+
+    printf("\n--- Дневник фермера ---\n");
+    printf("Фермер: %s\n", farmer_name);
+    printf("Игровое время: день %d, %02d:00\n", current_day, current_hour);
+    printf("Дата и время записи: %s\n", timestamp);
+    printf("Инвентарь:\n");
+
+    fprintf(file, "--- Дневник фермера ---\n");
+    fprintf(file, "Фермер: %s\n", farmer_name);
+    fprintf(file, "Игровое время: день %d, %02d:00\n", current_day, current_hour);
+    fprintf(file, "Дата и время записи: %s\n", timestamp);
+    fprintf(file, "Инвентарь:\n");
+
+    for (int i = 0; i < INVENTORY_SIZE; i++) {
+        int id = inventory[i];
+        const char *name = (id >= 0 && id < MAX_ITEMS)
+                               ? item_names[id]
+                               : "Неизвестный предмет";
+        printf("Слот %d: [%d] - %s\n", i, id, name);
+        fprintf(file, "Слот %d: [%d] - %s\n", i, id, name);
+    }
+
+    printf("-----------------------\n");
+    fprintf(file, "-----------------------\n");
+    fclose(file);
+    printf("Запись добавлена в diary.txt.\n");
+}
