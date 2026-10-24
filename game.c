@@ -59,6 +59,7 @@ void run_program() {
         printf("[6] Очистка от мусора\n");
         printf("[7] Поиск предмета по названию\n");
         printf("[8] Записать состояние в дневник фермера\n");
+        printf("[9] Подсчёт ресурсов из input.txt\n");
         printf("Выберите пункт: ");
 
         if (scanf("%d", &choice) != 1) {
@@ -71,7 +72,7 @@ void run_program() {
         switch (choice) {
             case 0:
                 printf("Выход из программы.\n");
-                return 0;
+                return;
             case 1:
                 see_time();
                 break;
@@ -91,7 +92,10 @@ void run_program() {
                 clear_trash();
                 break;
             case 7:
-                search_inventory();
+                search_item_by_name();
+                break;
+            case 8:
+                write_diary();
                 break;
             default:
                 printf("Некорректный выбор.\n");
@@ -210,7 +214,7 @@ void clear_trash() {
     printf("Удалено %d предметов.\n", count);
 }
 
-void search_inventory() {
+void search_item_by_name() {
     char name[MAX_NAME_LEN];
     int item_id = -1;
 
@@ -260,13 +264,13 @@ void write_diary() {
     }
 
     printf("\n--- Дневник фермера ---\n");
-    printf("Фермер: %s\n", farmer_name);
+    printf("Фермер: %s\n", player_name);
     printf("Игровое время: день %d, %02d:00\n", current_day, current_hour);
     printf("Дата и время записи: %s\n", timestamp);
     printf("Инвентарь:\n");
 
     fprintf(file, "--- Дневник фермера ---\n");
-    fprintf(file, "Фермер: %s\n", farmer_name);
+    fprintf(file, "Фермер: %s\n", player_name);
     fprintf(file, "Игровое время: день %d, %02d:00\n", current_day, current_hour);
     fprintf(file, "Дата и время записи: %s\n", timestamp);
     fprintf(file, "Инвентарь:\n");
@@ -284,4 +288,55 @@ void write_diary() {
     fprintf(file, "-----------------------\n");
     fclose(file);
     printf("Запись добавлена в diary.txt.\n");
+}
+
+void count_resources() {
+    char names[MAX_RESOURCES][MAX_NAME_LEN];
+    int totals[MAX_RESOURCES] = {0};
+    int count = 0;
+    char name[MAX_NAME_LEN];
+    int quantity;
+
+    FILE *input = fopen("input.txt", "r");
+    if (input == NULL) {
+        printf("Не удалось открыть input.txt.\n");
+        return;
+    }
+
+    while (fscanf(input, "%63s %d", name, &quantity) == 2) {
+        int index;
+        for (index = 0; index < count; index++) {
+            if (strcmp(names[index], name) == 0) {
+                break;
+            }
+        }
+
+        if (index == count) {
+            if (count >= MAX_RESOURCES) {
+                printf("Слишком много разных ресурсов; оставшиеся записи пропущены.\n");
+                break;
+            }
+            snprintf(names[count], MAX_NAME_LEN, "%s", name);
+            totals[count] = 0;
+            count++;
+        }
+
+        totals[index] += quantity;
+    }
+    fclose(input);
+
+    FILE *output = fopen("output.txt", "w");
+    if (output == NULL) {
+        printf("Не удалось открыть output.txt для записи.\n");
+        return;
+    }
+
+    printf("--- Сводная ведомость ---\n");
+    for (int i = 0; i < count; i++) {
+        printf("%s: %d шт.\n", names[i], totals[i]);
+        fprintf(output, "%s: %d шт.\n", names[i], totals[i]);
+    }
+
+    fclose(output);
+    printf("Ведомость записана в output.txt.\n");
 }
