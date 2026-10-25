@@ -218,37 +218,34 @@ void clear_trash() {
 }
 
 void search_item_by_name() {
-    char name[MAX_NAME_LEN];
-    int item_id = -1;
-
+    char name[MAX_NAME_LEN];   
     printf("Введите название предмета: ");
-    read_line(name, sizeof(name));
-
+    fflush(stdout);
+    if (scanf("%63s", name) != 1) { 
+        while (getchar() != '\n'); 
+        return; 
+    }
+    int found_id = -1;
     for (int i = 0; i < MAX_ITEMS; i++) {
-        if (strcmp(name, item_names[i]) == 0) {
-            item_id = i;
-            break;
+        if (item_names[i][0] != '\0' && strcmp(item_names[i], name) == 0) { 
+            found_id = i; 
+            break; 
         }
     }
-
-    if (item_id < 0) {
+    if (found_id < 0) {
         printf("Предмета с таким названием нет в каталоге.\n");
         return;
     }
-
     int found = 0;
-    printf("Предмет \"%s\" найден в слотах: ", item_names[item_id]);
-    for (int i = 0; i < 10; i++) {
-        if (inventory[i] == item_id) {
-            printf("%d ", i);
+    for (int i = 0; i < INVENTORY_SIZE; i++) {
+        if (inventory[i] == found_id) {
+            printf(" \"%s\" найден в слоте %d\n", name, i);
             found = 1;
         }
     }
-
     if (!found) {
-        printf("в рюкзаке его нет.");
+        printf("В рюкзаке данного предмета нет.\n");
     }
-    printf("\n");
 }
 
 void write_diary() {
