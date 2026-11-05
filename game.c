@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
 
 #define INVENTORY_SIZE 10
 #define MAX_ITEMS 10
 #define MAX_NAME_LEN 64
 #define MAX_FARMER_NAME_LEN 33
 #define MAX_RESOURCES 10
+#define MIN_MAP_SIZE 5
+#define MAX_MAP_SIZE 30
 
 int current_day = 1;
 int current_hour = 8;
