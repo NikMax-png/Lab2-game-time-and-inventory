@@ -57,6 +57,100 @@ static void draw_map(
     }
 }
 
+static int generate_floor(
+    char ***map_out, int *width_out, int *height_out,
+    int *player_x, int *player_y, int *up_x, int *up_y,
+    int has_up
+) {
+    int width = MIN_MAP_SIZE + rand() % (MAX_MAP_SIZE - MIN_MAP_SIZE + 1);
+    int height = MIN_MAP_SIZE + rand() % (MAX_MAP_SIZE - MIN_MAP_SIZE + 1);
+
+    char **map = malloc((size_t)height * sizeof(char *)); 
+    if (map == NULL) {
+        printf("Не удалось выделить память для массива строк карты.\n");
+        return 0;
+    }
+
+    for (int y = 0; y < height; y++) { 
+        map[y] = malloc((size_t)width * sizeof(char));
+        if (map[y] == NULL) {
+            for (int i = 0; i < y; i++) {
+                free(map[i]);
+            }
+            free(map);
+            printf("Не удалось выделить память для строки %d.\n", y);
+            return 0;
+        }
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
+                map[y][x] = '#';
+            } else {
+                map[y][x] = '.';
+            }
+        }
+    }
+
+    *player_x = 1 + rand() % (width - 2);
+    *player_y = 1 + rand() % (height - 2);
+
+    if (has_up) {
+        int dirs[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+        int order[4] = {0, 1, 2, 3};
+
+        for (int i = 3; i > 0; i--) {
+            int j = rand() % (i + 1);
+            int temp = order[i];
+            order[i] = order[j];
+            order[j] = temp;
+        }
+
+        *up_x = *player_x;
+        *up_y = *player_y;
+
+        for (int i = 0; i < 4; i++) {
+            int dir = order[i];
+            int x = *player_x + dirs[dir][0];
+            int y = *player_y + dirs[dir][1];
+
+            if (x > 0 && x < width - 1 && y > 0 && y < height - 1) {
+                *up_x = x;
+                *up_y = y;
+                break;
+            }
+        }
+    }
+
+    for (int y = 1; y < height - 1; y++) {
+        for (int x = 1; x < width - 1; x++) {
+            if ((x == *player_x && y == *player_y) ||
+                (has_up && x == *up_x && y == *up_y)) {
+                continue;
+            }
+
+            if (rand() % 100 < 15) {
+                map[y][x] = (rand() % 2 == 0) ? 'B' : 'C';
+            }
+        }
+    }
+
+    int down_x, down_y;
+    do {
+        down_x = 1 + rand() % (width - 2);
+        down_y = 1 + rand() % (height - 2);
+    } while ((down_x == *player_x && down_y == *player_y) ||
+             (has_up && down_x == *up_x && down_y == *up_y));
+
+    map[down_y][down_x] = 'D';
+
+    *map_out = map;
+    *width_out = width;
+    *height_out = height;
+    return 1;
+}
+
 void read_line(char *buffer, size_t size);
 void load_item_names();
 void see_time();
