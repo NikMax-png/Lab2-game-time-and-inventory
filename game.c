@@ -14,6 +14,7 @@
 int current_day = 1;
 int current_hour = 8;
 int inventory[INVENTORY_SIZE] = {0};
+int adventure_depth = 0;
 
 char item_names[MAX_ITEMS][MAX_NAME_LEN];
 char player_name[MAX_FARMER_NAME_LEN];
