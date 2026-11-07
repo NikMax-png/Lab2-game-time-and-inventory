@@ -10,6 +10,7 @@
 #define MAX_RESOURCES 10
 #define MIN_MAP_SIZE 5
 #define MAX_MAP_SIZE 30
+#define VISION_RADIUS 4
 
 int current_day = 1;
 int current_hour = 8;
@@ -162,6 +163,7 @@ void clear_trash();
 void search_item_by_name();
 void write_diary();
 void count_resources();
+void adventure();
 void initialize_game();
 void run_program();
 
@@ -196,6 +198,7 @@ void run_program() {
         printf("[7] Поиск предмета по названию\n");
         printf("[8] Записать состояние в дневник фермера\n");
         printf("[9] Подсчёт ресурсов из input.txt\n");
+        printf("[10] Отправиться в приключение\n");
         printf("Выберите пункт: ");
 
         if (scanf("%d", &choice) != 1) {
@@ -235,6 +238,9 @@ void run_program() {
                 break;
             case 9:
                 count_resources();
+                break;
+            case 10:
+                adventure();
                 break;
             default:
                 printf("Некорректный выбор.\n");
@@ -475,4 +481,83 @@ void count_resources() {
 
     fclose(output);
     printf("Ведомость записана в output.txt.\n");
+}
+
+void adventure() {
+    char **map = NULL;
+    int width, height;
+    int player_x, player_y, up_x = -1, up_y = -1;
+    int has_up = 0;
+
+    adventure_depth = 1;
+
+    if (!generate_floor(&map, &width, &height,
+                        &player_x, &player_y, &up_x, &up_y, has_up)) {
+        return;
+    }
+
+    printf("\nПриключение началось! Управление: W/A/S/D, Q — домой с лестницы U.\n");
+
+    while (1) {
+        draw_map(map, width, height, player_x, player_y, up_x, up_y, has_up);
+        printf("Ваш ход (W/A/S/D/Q): ");
+
+        char input[32];
+        read_line(input, sizeof(input));
+        char command = input[0];
+
+        if (command >= 'a' && command <= 'z') {
+            command = (char)(command - 'a' + 'A');
+        }
+
+        if (command == 'Q') {
+            if (has_up && player_x == up_x && player_y == up_y) {
+                free_map(map, height); 
+                printf("Вы вернулись домой.\n");
+                return;
+            }
+            printf("Вернуться домой можно только стоя на лестнице U.\n");
+            continue;
+        }
+
+        int new_x = player_x;
+        int new_y = player_y;
+
+        switch (command) {
+            case 'W': new_y--; break;
+            case 'A': new_x--; break;
+            case 'S': new_y++; break;
+            case 'D': new_x++; break;
+            default:
+                printf("Неизвестная команда. Используйте W/A/S/D или Q.\n");
+                continue;
+        }
+
+        if (!inside_map(new_x, new_y, width, height)) {
+            continue;
+        }
+
+        char destination = map[new_y][new_x]; 
+        if (destination == '#' || destination == 'B' || destination == 'C') {
+            printf("Путь преграждает препятствие.\n");
+            continue;
+        }
+
+        player_x = new_x;
+        player_y = new_y;
+
+        if (destination == 'D') {
+            free_map(map, height); 
+            adventure_depth++;
+            has_up = 1;
+
+            if (!generate_floor(&map, &width, &height,
+                                &player_x, &player_y, &up_x, &up_y, has_up)) {
+                printf("Приключение завершено из-за ошибки памяти.\n");
+                return;
+            }
+
+            printf("Вы спустились на новый этаж.\n");
+        }
+    }
 }
