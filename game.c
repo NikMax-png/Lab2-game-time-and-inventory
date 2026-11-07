@@ -19,6 +19,44 @@ int adventure_depth = 0;
 char item_names[MAX_ITEMS][MAX_NAME_LEN];
 char player_name[MAX_FARMER_NAME_LEN];
 
+static int inside_map(int x, int y, int width, int height) {
+    return x >= 0 && x < width && y >= 0 && y < height;
+}
+
+static void free_map(char **map, int height) {
+    if (map == NULL) return;
+    for (int y = 0; y < height; y++) {
+        free(map[y]);
+    }
+    free(map);
+}
+
+static void draw_map(
+    char **map, int width, int height,
+    int player_x, int player_y,
+    int up_x, int up_y, int has_up
+) {
+    printf("\nЭтаж глубины: %d\n", adventure_depth);
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int dx = x - player_x;
+            int dy = y - player_y;
+
+            if (dx * dx + dy * dy > VISION_RADIUS * VISION_RADIUS) {
+                putchar('?');
+            } else if (x == player_x && y == player_y) {
+                putchar('@');
+            } else if (has_up && x == up_x && y == up_y) {
+                putchar('U');
+            } else {
+                putchar(map[y][x]); 
+            }
+        }
+        putchar('\n');
+    }
+}
+
 void read_line(char *buffer, size_t size);
 void load_item_names();
 void see_time();
