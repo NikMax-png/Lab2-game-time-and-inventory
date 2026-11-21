@@ -1,0 +1,13 @@
+main
+*.exe
+*.o
+*.obj
+*.out
+*.vs/
+*.suo
+*.user
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+diary.txt
+output.txt
